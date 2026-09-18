@@ -1,0 +1,53 @@
+# .NET build artifacts
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results / coverage
+[Tt]est[Rr]esult*/
+*.trx
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+.nuget/
+
+# Rider
+*.DotSettings.user
+
+# Secrets locais: appsettings.Development.json fica versionado sem segredos
+# reais (usa placeholders); segredos de verdade vão via dotnet user-secrets
+# ou variáveis de ambiente, nunca commitados.
+appsettings.*.local.json
+appsettings.Local.json
+*.env
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ferramentas locais do repo (não fazem parte da entrega)
+.claude/
+_ClaudeCode_Nao_Ler/

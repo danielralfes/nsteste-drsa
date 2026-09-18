@@ -1,0 +1,73 @@
+services:
+  db:
+    image: postgres:16
+    container_name: orderservice-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: orderservice
+      POSTGRES_PASSWORD: orderservice
+      POSTGRES_DB: orderservice
+    ports:
+      - "5432:5432"
+    volumes:
+      - orderservice-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orderservice -d orderservice"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/OrderService.Api/Dockerfile
+    container_name: orderservice-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5100:5100"
+      - "5101:5101"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "5100"
+      ASPNETCORE_HTTPS_PORTS: "5101"
+      # Dentro da rede do compose o host do Postgres é o nome do serviço
+      # ("db"), não "localhost".
+      ConnectionStrings__OrderServiceDb: "Host=db;Port=5432;Database=orderservice;Username=orderservice;Password=orderservice"
+      # Reaproveita os valores de dev já usados em appsettings.Development.json
+      # (docs/decisions.md seção 23) — não são segredo de produção real, só
+      # o suficiente para `docker compose up` funcionar out-of-the-box.
+      # Usuário: admin / senha: Dev@123456.
+      Auth__Username: admin
+      Auth__PasswordHash: "210000.+63OhSw5UsCt9upnU658+A==.o/zDCpHXbXRNJxo/XkB6Xw+gOhW+0nsBfMyK4l5IJxU="
+      Jwt__Issuer: OrderService
+      Jwt__Audience: OrderService
+      Jwt__Key: "/S7F4aCx4v4iLUcbEFtordq/X58LhGLr5QxCM5m00EUUm4RKuUvp8Vo04FzHVNF+"
+      Jwt__ExpirationMinutes: "60"
+      # ATENÇÃO: HTTPS aqui é só conveniência de avaliação/execução local.
+      # O certificado de desenvolvimento autoassinado (`dotnet dev-certs
+      # https`) é gerado automaticamente durante o build da imagem
+      # (src/OrderService.Api/Dockerfile) — não depende de nenhum volume
+      # montado do host nem de passo manual antes do `docker compose up`.
+      # As variáveis ASPNETCORE_Kestrel__Certificates__Default__* também já
+      # vêm definidas no próprio Dockerfile, não precisam ser passadas aqui.
+      # NUNCA gestão de segredo real, e NUNCA um padrão para produção (ver
+      # README e docs/decisions.md seção 30).
+      # ATENÇÃO: Swagger habilitado aqui é só conveniência de avaliação —
+      # ASPNETCORE_ENVIRONMENT continua Production de propósito (não expõe
+      # detalhe de exceção nem qualquer outro comportamento de Development).
+      # `EnableSwagger` é uma flag dedicada, independente de ambiente, ligada
+      # apenas para facilitar explorar a API via Swagger UI rodando por
+      # `docker compose up`; não é assim que se exporia Swagger num ambiente
+      # de produção real (docs/decisions.md seção 31).
+      EnableSwagger: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5100/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  orderservice-db-data:

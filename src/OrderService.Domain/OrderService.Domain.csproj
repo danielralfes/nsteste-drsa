@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Domain concentra as invariantes de negócio: tratar warnings como erro
+         evita nullable/CA silenciosamente ignorados nesta camada. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Permite ao seeder idempotente da Infrastructure (Fatia 3,
+         docs/decisions.md seção 6) usar o construtor `internal Product(Guid,
+         string, Money)` para criar produtos com Guid fixo e conhecido, sem
+         expor esse construtor na API pública do Domain. -->
+    <InternalsVisibleTo Include="OrderService.Infrastructure" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrderService.Application\OrderService.Application.csproj" />
+    <ProjectReference Include="..\OrderService.Domain\OrderService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Microsoft.EntityFrameworkCore/.Design em 10.0.12 (mais recente estável).
+      Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 (última estável do
+      provider neste momento) aceita EF Core/Relational em [10.0.4, 11.0.0),
+      então 10.0.12 é compatível — mas Microsoft.EntityFrameworkCore.Design
+      10.0.12 fixa Microsoft.EntityFrameworkCore.Relational exatamente em
+      10.0.12 como dependência "runtime" (com PrivateAssets=all, não
+      propaga para os projetos consumidores). Isso fazia o
+      OrderService.Infrastructure.dll compilar contra Relational 10.0.12
+      enquanto os projetos consumidores (Api, IntegrationTests) resolviam o
+      piso 10.0.4 do range do Npgsql — reintroduzindo o MSB3277
+      (docs/decisions.md seção 21.2). Corrigido fixando também uma
+      referência direta e não-privada a Microsoft.EntityFrameworkCore.Relational
+      em 10.0.12, para que a mesma versão se propague a todos os projetos
+      que referenciam este (via ProjectReference). Reavaliar quando o
+      Npgsql provider lançar uma versão estável que dependa de EF Core 11.x.
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
+  </ItemGroup>
+
+</Project>

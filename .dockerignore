@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+tests/
+docs/
+.git/
+.gitignore
+.dockerignore
+.claude/
+_ClaudeCode_Nao_Ler/
+*.md

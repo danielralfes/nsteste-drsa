@@ -1,0 +1,17 @@
+# Normaliza terminação de linha no repositório: tudo em LF no controle de
+# versão, o Git converte para CRLF só no checkout em Windows quando fizer
+# sentido para o tipo de arquivo.
+* text=auto eol=lf
+
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=crlf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+.editorconfig text eol=lf
